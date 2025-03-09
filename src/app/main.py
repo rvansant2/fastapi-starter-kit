@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
+from app.api.home import router as home_router
 
 
 def get_application():
@@ -19,16 +20,11 @@ def get_application():
         allow_headers=["*"],
     )
 
+    # Include the home route without a prefix
+    _app.include_router(home_router, prefix="", tags=["home"])
+
     return _app
 
 
 app = get_application()
 
-@app.get('/', status_code=200)
-async def home():
-    data = {
-        'name': settings.PROJECT_NAME,
-        'description': settings.PROJECT_DESCRIPTION,
-        'version': settings.PROJECT_VERSION
-    }
-    return { 'data': data }
