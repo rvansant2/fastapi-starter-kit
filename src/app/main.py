@@ -23,6 +23,8 @@ app = get_application()
 @app.get('/', status_code=200)
 async def home():
     data = {
-        'message': settings.PROJECT_NAME
+        'name': settings.PROJECT_NAME,
+        'description': settings.PROJECT_DESCRIPTION,
+        'version': settings.PROJECT_VERSION
     }
     return { 'data': data }
