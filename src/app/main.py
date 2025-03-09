@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
-from app.api.home import router as home_router
+from app.home.router import router as home_router
 
 
 def get_application():
