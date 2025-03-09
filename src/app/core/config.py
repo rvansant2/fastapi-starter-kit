@@ -1,10 +1,7 @@
-'''
-Settings Class
-'''
 from typing import Any, Dict, List, Optional, Union
 
-from pydantic import AnyHttpUrl, BaseSettings, PostgresDsn, validator
-
+from pydantic import AnyHttpUrl, PostgresDsn, field_validator, FieldValidationInfo, validator
+from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     PROJECT_NAME: str
@@ -24,22 +21,18 @@ class Settings(BaseSettings):
     POSTGRES_DB: str
     DATABASE_URI: Optional[PostgresDsn] = None
 
-    @validator("DATABASE_URI", pre=True)
-    def assemble_db_connection(cls, v: Optional[str], values: Dict[str, Any]) -> Any:
+    @field_validator("DATABASE_URI", mode="before")
+    def assemble_db_connection(cls, v: Optional[str], info: FieldValidationInfo) -> Any:
         if isinstance(v, str):
             return v
-        return PostgresDsn.build(
-            scheme="postgresql",
-            user=values.get("POSTGRES_USER"),
-            password=values.get("POSTGRES_PASSWORD"),
-            host=values.get("POSTGRES_SERVER"),
-            path=f"/{values.get('POSTGRES_DB') or ''}",
-        )
-    
+        user = info.data.get("POSTGRES_USER")
+        password = info.data.get("POSTGRES_PASSWORD")
+        host = info.data.get("POSTGRES_SERVER")
+        db = info.data.get("POSTGRES_DB") or ""
+        return f"postgresql://{user}:{password}@{host}/{db}"
 
     class Config:
         case_sensitive = True
         env_file = ".env"
-
 
 settings = Settings()

@@ -143,3 +143,5 @@ cython_debug/
 # local files
 .env
 db-data
+.python-version
+.DS_Store
