@@ -5,7 +5,11 @@ from app.core.config import settings
 
 
 def get_application():
-    _app = FastAPI(title=settings.PROJECT_NAME)
+    _app = FastAPI(
+        title=settings.PROJECT_NAME,
+        description=settings.PROJECT_DESCRIPTION,
+        version="0.1"
+    )
 
     _app.add_middleware(
         CORSMiddleware,
