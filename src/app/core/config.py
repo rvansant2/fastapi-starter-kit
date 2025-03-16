@@ -1,13 +1,18 @@
 from typing import Any, List, Optional, Union
 
-from pydantic import AnyHttpUrl, PostgresDsn, field_validator, FieldValidationInfo, validator
+from pydantic import AnyHttpUrl, PostgresDsn, field_validator, FieldValidationInfo
 from pydantic_settings import BaseSettings
+import os
+
+ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
 
 class Settings(BaseSettings):
     PROJECT_NAME: str
     PROJECT_DESCRIPTION: str
     PROJECT_VERSION: str
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
+    API_PORT: str
+    JWT_SECRET_KEY: str
 
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:
@@ -31,10 +36,15 @@ class Settings(BaseSettings):
         password = info.data.get("POSTGRES_PASSWORD")
         host = info.data.get("POSTGRES_SERVER")
         db = info.data.get("POSTGRES_DB") or ""
+
+        # Conditional for init_db.py file
+        if ENVIRONMENT != "docker":
+            host = "localhost"
+
         return f"postgresql://{user}:{password}@{host}/{db}"
 
     class Config:
         case_sensitive = True
-        env_file = ".env"
+        env_file = "../.env"
 
 settings = Settings()
