@@ -5,11 +5,13 @@ from typing import Generator
 
 from app.database.session import SessionLocal
 
+
 @as_declarative()
 class Base:
     @declared_attr
     def __tablename__(cls) -> str:
         return cls.__name__.lower()
+
 
 def get_db() -> Generator[Session, None, None]:
     db = SessionLocal()

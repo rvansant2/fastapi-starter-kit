@@ -1,18 +1,20 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import uvicorn
 
 from app.core.config import settings
 from app.home.router import router as home_router
 
 
-def get_application():
-    _app = FastAPI(
+def create_app() -> FastAPI:
+    # Instantiate FastAPI
+    app = FastAPI(
         title=settings.PROJECT_NAME,
         description=settings.PROJECT_DESCRIPTION,
-        version="0.1"
+        version=settings.PROJECT_VERSION
     )
-
-    _app.add_middleware(
+    # Configure CORS middleware
+    app.add_middleware(
         CORSMiddleware,
         allow_origins=[str(origin) for origin in settings.BACKEND_CORS_ORIGINS],
         allow_credentials=True,
@@ -21,10 +23,18 @@ def get_application():
     )
 
     # Include the home route without a prefix
-    _app.include_router(home_router, prefix="", tags=["home"])
+    app.include_router(home_router, prefix="", tags=["home"])
 
-    return _app
+    return app
 
 
-app = get_application()
+app = create_app()
 
+if __name__ == "main":
+    # For development only reload=True
+    uvicorn.run(
+        "app.main:app",
+        host="0.0.0.0",
+        port=int(settings.API_PORT),
+        reload=True
+    )

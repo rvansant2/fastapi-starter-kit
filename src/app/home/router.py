@@ -1,8 +1,9 @@
-# app/api/home.py
+# app/home/router.py
 from fastapi import APIRouter
 from app.core.config import settings
 
 router = APIRouter()
+
 
 @router.get("/", status_code=200)
 async def home():

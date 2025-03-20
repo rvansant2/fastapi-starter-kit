@@ -6,6 +6,7 @@ import os
 
 ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
 
+
 class Settings(BaseSettings):
     PROJECT_NAME: str
     PROJECT_DESCRIPTION: str
@@ -45,6 +46,8 @@ class Settings(BaseSettings):
 
     class Config:
         case_sensitive = True
-        env_file = "../.env"
+        env_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", ".env")
+        # print(env_file)
+
 
 settings = Settings()
