@@ -1,7 +1,7 @@
 # tests/test_home.py
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-from app.home.router import router as home_router
+from app.home.routes import router as home_router
 
 # Instantiate FastAPI app
 app = FastAPI()
